@@ -6,6 +6,8 @@ export const TERRAIN = {
   'r': { key: 'rubble',     name: 'Rubble',     cost: 2,        def: 1, blocked: false },
   '#': { key: 'wall',       name: 'Wall',       cost: Infinity, def: 0, blocked: true  },
   'E': { key: 'extraction', name: 'Extraction', cost: 1,        def: 0, blocked: false },
+  'D': { key: 'door',       name: 'Door',       cost: Infinity, def: 0, blocked: true  }, // opens to floor
+  'C': { key: 'container',  name: 'Container',  cost: 1,        def: 0, blocked: false }, // searchable
 };
 
 export class Grid {
@@ -45,6 +47,30 @@ export class Grid {
 
   isExtraction(x, y) {
     return this.key(x, y) === 'extraction';
+  }
+
+  isDoor(x, y) {
+    return this.charAt(x, y) === 'D';
+  }
+
+  // Open a closed door in place (door tile becomes floor).
+  openDoor(x, y) {
+    if (this.isDoor(x, y)) {
+      this.rows[y][x] = '.';
+      return true;
+    }
+    return false;
+  }
+
+  // All tiles of a given char, as {x,y} — used to seed containers at reset.
+  tilesOf(ch) {
+    const out = [];
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        if (this.rows[y][x] === ch) out.push({ x, y });
+      }
+    }
+    return out;
   }
 }
 

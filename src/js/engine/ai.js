@@ -17,9 +17,15 @@ export function decideWalker(grid, walker, units) {
     return { x, y };
   });
 
+  // A probe unit at a candidate tile carrying the walker's real weapon profile.
+  const probeAt = (c) => ({
+    x: c.x, y: c.y,
+    minRange: walker.minRange, maxRange: walker.maxRange, ammo: walker.ammo,
+  });
+
   // Prefer a tile from which we can attack a survivor this turn.
   const attackTiles = candidates.filter((c) =>
-    survivors.some((s) => inAttackRange({ x: c.x, y: c.y, range: walker.range }, s))
+    survivors.some((s) => inAttackRange(probeAt(c), s))
   );
 
   const pickTile = (list) => {
@@ -36,7 +42,7 @@ export function decideWalker(grid, walker, units) {
   const moveTo = pickTile(attackTiles.length ? attackTiles : candidates) || { x: walker.x, y: walker.y };
 
   // From the chosen tile, target the reachable survivor with lowest hp, then lowest id.
-  const probe = { x: moveTo.x, y: moveTo.y, range: walker.range };
+  const probe = probeAt(moveTo);
   const targets = survivors
     .filter((s) => inAttackRange(probe, s))
     .sort((a, b) => (a.hp !== b.hp ? a.hp - b.hp : a.id - b.id));
