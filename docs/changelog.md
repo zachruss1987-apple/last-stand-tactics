@@ -2,6 +2,12 @@
 
 Newest first. Format: `date — [role] change`.
 
+## 2026-07-06
+- **[graphics-designer][programmer]** Mobile/touch pass for iPhone playtest: fluid board
+  that fits any viewport width (no horizontal scroll), larger tap targets, touch-action
+  tuning (no double-tap zoom / tap highlight), and iOS web-app meta tags. Demo can now be
+  served on the LAN (`python -m http.server 8000 --bind 0.0.0.0`) for on-device testing.
+
 ## 2026-07-05
 - **[program-manager]** Project bootstrapped: CLAUDE.md, team agent roles, docs
   (design canon, roadmap, decisions log), autonomous settings, repo structure.
