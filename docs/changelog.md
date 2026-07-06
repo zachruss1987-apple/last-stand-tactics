@@ -2,7 +2,19 @@
 
 Newest first. Format: `date — [role] change`.
 
-## 2026-07-06
+## 2026-07-06 (M2 build)
+- **[graphics-designer][programmer]** **SVG paper-doll art**: human survivor sprites with
+  a visible equipped weapon; zombie sprites whose silhouette encodes stats (size ∝
+  strength, lean ∝ speed, tint per variant) with per-variant markers (Brute shoulders,
+  Runner motion streaks, Spitter acid drip). Replaces emoji glyphs.
+- **[programmer]** Render integration: on-board ammo & Overwatch badges, item-drop icons,
+  door/container tiles, "open door" highlight, weapon + skill + ammo HUD, variant tally,
+  Guard (Overwatch) button + hotkey, extraction pulse. Tile-art polish.
+- **[game-designer][programmer]** Weapon/ammo + skill system, four zombie variants, doors,
+  searchable containers, and seeded drops (see engine commit). Smoke test → 22 checks green;
+  sprite validity check added.
+
+## 2026-07-06 (M2 kickoff)
 - **[program-manager]** Kicked off **M2 "Depth & Identity"** (stakeholder-requested):
   SVG paper-doll characters, visible weapons, melee/ranged weapon + skill system, zombie
   variants with stat-mirroring art, doors/scavenging/drops, and a real art pass. Work

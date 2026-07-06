@@ -29,6 +29,7 @@
         <div id="board" class="board" aria-label="tactical map"></div>
         <div class="controls">
           <button id="btn-endturn" class="btn primary">End Turn</button>
+          <button id="btn-guard" class="btn" disabled title="Ranger only: fire on the first walker that enters range next enemy phase">Guard (Overwatch)</button>
           <button id="btn-wait" class="btn" disabled>Wait</button>
           <button id="btn-cancel" class="btn" disabled>Cancel Move</button>
           <button id="btn-restart" class="btn">Restart</button>
@@ -39,9 +40,12 @@
           <span><i class="sw t-rubble"></i> Rubble (+DEF, slow)</span>
           <span><i class="sw t-wall"></i> Wall</span>
           <span><i class="sw t-extraction"></i> Extraction</span>
+          <span><i class="sw t-door"></i> Door</span>
+          <span><i class="sw t-container"></i> Container</span>
           <span><i class="sw reach"></i> Move</span>
           <span><i class="sw attack"></i> Attack</span>
           <span><i class="sw heal"></i> Heal</span>
+          <span><i class="sw openable"></i> Open</span>
         </div>
       </section>
 

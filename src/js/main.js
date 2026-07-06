@@ -17,6 +17,7 @@ const els = {
   log: byId('log'),
   overlay: byId('overlay'),
   btnEndTurn: byId('btn-endturn'),
+  btnGuard: byId('btn-guard'),
   btnWait: byId('btn-wait'),
   btnCancel: byId('btn-cancel'),
   btnRestart: byId('btn-restart'),

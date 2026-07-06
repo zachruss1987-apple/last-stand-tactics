@@ -125,3 +125,32 @@ Design hooks recorded so they stay consistent when added:
 - **Campaign & permadeath persistence** across levels.
 
 Add these only when scheduled on the roadmap; keep this section the agreed spec.
+
+---
+
+## 9. M2 Additions (shipped) — Weapons, Skills, Variants, Interaction
+
+**Weapons (`data/weapons.js`).** Each unit has an equipped weapon. Effective attack =
+`unit.str + weapon.power`. Range comes from the weapon (`minRange..maxRange`); ranged
+weapons with `minRange > 1` cannot fire point-blank (a positioning risk). Guns consume
+`ammo` per shot (attacks *and* counters); melee/natural weapons are unlimited. A unit
+with no ammo cannot use that weapon (must scavenge). Counters require the defender's own
+weapon to reach the attacker (range + ammo) — so ranged attackers usually take no counter.
+
+**Skills (`data/skills.js`).** Deterministic, checked by id:
+- *Cleave* (Fighter) — a melee hit also strikes the enemy directly beyond the target.
+- *Steady Aim* (Ranger) — +2 attack if the unit did not move this turn.
+- *Overwatch* (Ranger) — take **Guard** instead of attacking; fire one reaction shot at the
+  first walker that enters range during the enemy phase (respects the dead zone).
+- *Smash* (Brute) — ignores 2 points of the target's defense.
+- *Sprint* (Runner) — high movement. *Acid Spit* (Spitter) — natural ranged attack.
+
+**Zombie variants (`data/units.js`).** Walker (baseline), Runner (fast/fragile), Brute
+(slow tank/hitter, Smash), Spitter (range 2, no melee reprisal). Sprites encode stats:
+size ∝ strength/toughness, lean ∝ speed, tint per variant.
+
+**Interaction.** *Doors* (`'D'`): block movement/AI until a survivor spends an action to
+open them (chokepoint control). *Containers* (`'C'`): a survivor ending movement on one
+searches it. *Drops*: downed zombies have a seeded chance to drop an item. *Items*: **Ammo**
+(refills a ranged unit's magazine) and **Medkit** (heals the picker); *Scavenger* (Medic)
+recovers more. All loot randomness flows through the single seeded RNG.

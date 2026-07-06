@@ -15,6 +15,7 @@ export function attachInput(game, audio, els) {
   });
 
   els.btnEndTurn.addEventListener('click', () => { unlockAudio(); game.endTurn(); });
+  if (els.btnGuard) els.btnGuard.addEventListener('click', () => { unlockAudio(); game.guard(); });
   els.btnWait.addEventListener('click', () => { unlockAudio(); game.wait(); });
   els.btnCancel.addEventListener('click', () => { unlockAudio(); game.cancelMove(); });
   els.btnRestart.addEventListener('click', () => { unlockAudio(); game.reset(); });
@@ -40,6 +41,7 @@ export function attachInput(game, audio, els) {
     if (e.repeat) return;
     if (e.key === 'e' || e.key === 'E' || e.key === ' ') { e.preventDefault(); game.endTurn(); }
     else if (e.key === 'w' || e.key === 'W') { game.wait(); }
+    else if (e.key === 'g' || e.key === 'G') { game.guard(); }
     else if (e.key === 'Escape') { game.step === 'action' ? game.cancelMove() : game.deselect(); }
   });
 }
