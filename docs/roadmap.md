@@ -30,12 +30,15 @@ Task backlog:
 **Definition of Done for M1:** all smoke tests pass, no console errors, a first-time
 player can win in a few turns with real tactical decisions.
 
-## 🔭 M2 — Depth Pass  *(next, not started)*
-- Infection mechanic (see design canon §8 + Open Questions).
-- Second level + simple level transition.
-- Ammo/scarcity for ranged units.
-- Real art pass (sprites/tiles) and licensed-or-original audio decision.
-- Canvas rendering evaluation.
+## 🔭 M2 — "Depth & Identity"  *(active — stakeholder-requested)*
+Full work order in **[docs/m2-plan.md](m2-plan.md)**. Scope (approved 2026-07-06):
+- Human-looking survivors via a hand-coded **SVG paper-doll** system (replaces emoji).
+- **Visible equipped weapons**; a **melee vs ranged** weapon + **skill/trait** system.
+- **Zombie variants** (Runner/Brute/…) with stats, and **art that mirrors those stats**.
+- **Doors, scavengeable containers, item drops.**
+- Real **level + character art** pass.
+- Research-driven design: designers spawn `researcher` subagents for weapons/mechanics.
+- Deferred to later: infection mechanic, 2nd level/transition, audio sourcing, canvas port.
 
 ## 🌍 M3+ — Campaign  *(vision)*
 Multiple maps, permadeath persistence, support/relationship system, meta-progression,

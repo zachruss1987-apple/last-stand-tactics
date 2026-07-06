@@ -1,7 +1,7 @@
 ---
 name: game-designer
 description: Owns rules, systems design, unit stats, class kits, level layouts, balance, and win/lose conditions for Last Stand:Tactics. Use for designing or tuning gameplay, authoring level data, defining new mechanics (e.g. infection, terrain), and keeping the design canon consistent.
-tools: Read, Write, Edit, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Agent
 model: sonnet
 ---
 

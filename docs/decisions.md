@@ -27,9 +27,9 @@ Two purposes:
 - **Q5 — Long-term engine.** Stay browser (HTML/canvas) or plan a port to Godot/Unity
   for the full campaign? *Big architectural fork.* **Default:** stay browser through M2,
   reassess at M3.
-- **Q6 — Art production.** Placeholder CSS/emoji art for now — when do we invest in real
-  pixel-art sprites/tilesets, and do we commission or generate them? **Default:**
-  placeholders through M1, decide during M2.
+- **Q6 — Art production.** ✅ *Resolved (2026-07-06):* build a hand-coded **SVG paper-doll**
+  system in M2 (zero-dependency, human-looking, weapon overlays, stat-driven zombie art).
+  Downloaded/AI art revisited in a later milestone. See D7.
 
 *(Answer any of these whenever you like — reply here or just tell the team. Until then
 the defaults are what's being built.)*
@@ -48,3 +48,10 @@ the defaults are what's being built.)*
   canvas/WebGL swap is possible without rewriting game rules.
 - **D5 — Team/agent workflow.** Six specialist roles + PM coordinator + human stakeholder,
   defined in `.claude/agents/`. PM decomposes and dispatches; specialists own their folders.
+- **D6 — Overnight autonomy (2026-07-06).** For the M2 overnight run the stakeholder
+  approved `bypassPermissions` (no prompts) with deny guardrails (no force-push, no
+  `rm -rf /`), WebSearch + WebFetch, and spawning `researcher` subagents. Revisit/revert
+  after the run. Local override lives in the git-ignored `.claude/settings.local.json`.
+- **D7 — Art direction (2026-07-06).** Hand-coded **SVG paper-doll** character system:
+  layered SVG humans, swappable weapon overlays, zombie size/posture/tint encoding stats.
+  Chosen for zero-dependency, readability, and stat-driven variety. Resolves Q6.

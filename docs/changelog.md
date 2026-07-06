@@ -3,6 +3,12 @@
 Newest first. Format: `date — [role] change`.
 
 ## 2026-07-06
+- **[program-manager]** Kicked off **M2 "Depth & Identity"** (stakeholder-requested):
+  SVG paper-doll characters, visible weapons, melee/ranged weapon + skill system, zombie
+  variants with stat-mirroring art, doors/scavenging/drops, and a real art pass. Work
+  order in `docs/m2-plan.md`. Granted overnight autonomy (bypassPermissions + web +
+  research subagents); added the `researcher` agent role. Execution scheduled to begin
+  after context settles (~30 min).
 - **[graphics-designer][programmer]** Mobile/touch pass for iPhone playtest: fluid board
   that fits any viewport width (no horizontal scroll), larger tap targets, touch-action
   tuning (no double-tap zoom / tap highlight), and iOS web-app meta tags. Demo can now be
