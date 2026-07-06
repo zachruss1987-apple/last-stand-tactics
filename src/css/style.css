@@ -1,0 +1,189 @@
+/* Last Stand: Tactics — visual layer.
+   Owned by the Graphics Designer. Apocalyptic, desaturated, worn. Gameplay-critical
+   overlays (blue=move, red=attack, green=heal/extraction) pop against a muted board.
+   Readability first: color is always paired with shape/icon (see .claude/agents/graphics-designer.md). */
+
+:root {
+  --bg: #0e1112;
+  --panel: #171b1d;
+  --panel-2: #1e2426;
+  --ink: #d7d2c6;
+  --ink-dim: #8b8f8a;
+  --line: #2c3336;
+  --accent: #7fb2a1;      /* survivor teal */
+  --danger: #c65b4e;      /* attack / enemy */
+  --move: #4d86c6;        /* movement blue */
+  --heal: #6bbf72;        /* heal / extraction green */
+  --warn: #d8a63c;
+  --cell: 54px;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 70% -10%, #1a1f1e 0%, var(--bg) 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+.app { max-width: 1080px; margin: 0 auto; padding: 18px 20px 40px; }
+
+/* ---- top bar ---- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark { font-size: 40px; filter: grayscale(0.3) drop-shadow(0 2px 4px #000); }
+.brand h1 {
+  margin: 0; font-size: 26px; letter-spacing: 2px; font-weight: 800;
+  color: #e8e3d6; text-shadow: 0 2px 0 #000;
+}
+.brand h1 span { color: var(--danger); }
+.subtitle { margin: 2px 0 0; color: var(--ink-dim); font-size: 12.5px; letter-spacing: 1px; }
+
+.status {
+  padding: 8px 16px; border-radius: 6px; font-weight: 700; letter-spacing: 1px;
+  background: var(--panel-2); border: 1px solid var(--line); white-space: nowrap;
+}
+.status.phase-enemy { color: var(--danger); border-color: #4a2c29; }
+.status.status-won { color: var(--heal); border-color: #2b4a30; }
+.status.status-lost { color: var(--danger); border-color: #4a2c29; }
+
+/* ---- layout ---- */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+/* ---- board ---- */
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 10), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: 2px; padding: 8px; border-radius: 8px;
+  background: #0a0c0d; border: 1px solid var(--line);
+  box-shadow: inset 0 0 40px #000; width: max-content; max-width: 100%;
+}
+@media (max-width: 640px) { :root { --cell: 40px; } }
+
+.cell {
+  position: relative; border-radius: 3px; cursor: default;
+  display: flex; align-items: center; justify-content: center;
+  transition: filter 0.08s ease;
+}
+.cell.reach, .cell.attack, .cell.heal { cursor: pointer; }
+
+/* terrain */
+.t-floor { background: #23292a; box-shadow: inset 0 0 0 1px #1b2021; }
+.t-rubble {
+  background:
+    radial-gradient(3px 3px at 30% 40%, #5a5142 0, transparent 60%),
+    radial-gradient(3px 3px at 68% 65%, #4a4336 0, transparent 60%),
+    #33301f;
+  box-shadow: inset 0 0 0 1px #241f13;
+}
+.t-wall {
+  background: repeating-linear-gradient(45deg, #14181a 0 6px, #191e20 6px 12px);
+  box-shadow: inset 0 0 0 1px #0a0c0d;
+}
+.t-extraction {
+  background: radial-gradient(circle at 50% 50%, #1f4230 0, #14251c 80%);
+  box-shadow: inset 0 0 0 2px var(--heal), 0 0 12px #17402755;
+}
+.t-extraction::after {
+  content: "EXIT"; position: absolute; bottom: 2px; font-size: 8px; letter-spacing: 1px;
+  color: var(--heal); opacity: 0.9;
+}
+
+/* highlight overlays */
+.cell.reach::before, .cell.attack::before, .cell.heal::before {
+  content: ""; position: absolute; inset: 0; border-radius: 3px; pointer-events: none;
+}
+.cell.reach::before { background: #4d86c633; box-shadow: inset 0 0 0 2px #4d86c6aa; }
+.cell.attack::before { background: #c65b4e3a; box-shadow: inset 0 0 0 2px #c65b4ecc; }
+.cell.heal::before { background: #6bbf7233; box-shadow: inset 0 0 0 2px #6bbf72cc; }
+
+/* units */
+.unit {
+  position: relative; z-index: 2; width: 82%; height: 82%; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 35%, #2a3133, #121618);
+}
+.unit.f-player { box-shadow: 0 0 0 2px var(--accent), 0 2px 5px #000; }
+.unit.f-enemy { box-shadow: 0 0 0 2px #6f8a4a, 0 2px 5px #000; }
+.unit.selected { box-shadow: 0 0 0 3px #fff, 0 0 10px var(--accent); }
+.unit.acted { filter: grayscale(0.85) brightness(0.6); }
+.unit .glyph { font-size: calc(var(--cell) * 0.44); line-height: 1; }
+.unit .hpbar {
+  position: absolute; bottom: -1px; width: 78%; height: 4px; border-radius: 2px;
+  background: #000a; overflow: hidden;
+}
+.unit .hpfill { height: 100%; }
+.hp-ok { background: var(--heal); }
+.hp-warn { background: var(--warn); }
+.hp-low { background: var(--danger); }
+
+/* ---- controls & legend ---- */
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.btn {
+  background: var(--panel-2); color: var(--ink); border: 1px solid var(--line);
+  padding: 9px 14px; border-radius: 6px; font-weight: 600; cursor: pointer;
+  font-size: 13px; transition: background 0.1s, border-color 0.1s;
+}
+.btn:hover:not(:disabled) { background: #29312f; border-color: #3a4442; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn.primary { background: #274b3c; border-color: #356b52; color: #d7f0e2; }
+.btn.primary:hover:not(:disabled) { background: #2f5a48; }
+.btn.muted { color: var(--ink-dim); }
+
+.legend {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px;
+  color: var(--ink-dim); font-size: 11.5px;
+}
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend .sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; position: relative; }
+.legend .sw.reach { background: #4d86c655; box-shadow: inset 0 0 0 2px #4d86c6; }
+.legend .sw.attack { background: #c65b4e55; box-shadow: inset 0 0 0 2px #c65b4e; }
+.legend .sw.heal { background: #6bbf7255; box-shadow: inset 0 0 0 2px #6bbf72; }
+
+/* ---- sidebar ---- */
+.sidebar { display: flex; flex-direction: column; gap: 14px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.panel h3 { margin: 0 0 8px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-dim); }
+.selinfo h3 { color: var(--accent); text-transform: none; letter-spacing: 0.5px; font-size: 14px; }
+.muted { color: var(--ink-dim); font-size: 13px; margin: 4px 0; }
+.hint { color: var(--warn); font-size: 12.5px; margin: 6px 0 0; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 6px 0 0; font-size: 12.5px; color: var(--ink); }
+.stats span { background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 2px 7px; }
+
+.roster h3:not(:first-child) { margin-top: 12px; }
+.rosrow { display: flex; align-items: center; gap: 8px; padding: 4px 2px; font-size: 13px; border-bottom: 1px solid #ffffff08; }
+.rosrow .ros-glyph { font-size: 16px; }
+.rosrow .ros-name { flex: 1; }
+.rosrow .ros-hp { color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+.rosrow.acted { opacity: 0.55; }
+.rosrow.dead { opacity: 0.4; text-decoration: line-through; }
+.rosrow.dead .ros-hp { color: var(--danger); }
+
+.log-panel .log { height: 150px; overflow-y: auto; font-size: 12px; line-height: 1.5; color: var(--ink-dim); }
+.logline { padding: 1px 0; border-bottom: 1px solid #ffffff06; }
+.logline:last-child { color: var(--ink); }
+
+/* ---- overlay ---- */
+.overlay {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  background: #000b; backdrop-filter: blur(3px); z-index: 50;
+}
+.overlay.show { display: flex; }
+.overlay-card {
+  text-align: center; background: var(--panel); border: 1px solid var(--line);
+  padding: 32px 44px; border-radius: 12px; box-shadow: 0 20px 60px #000;
+}
+.overlay-card h1 { margin: 0 0 8px; font-size: 40px; letter-spacing: 4px; }
+.overlay-card.won h1 { color: var(--heal); }
+.overlay-card.lost h1 { color: var(--danger); }
+.overlay-card p { color: var(--ink-dim); margin: 0 0 20px; }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Last Stand: Tactics — Demo</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">🧟</span>
+        <div>
+          <h1>LAST STAND<span>: TACTICS</span></h1>
+          <p class="subtitle">Level 01 — The Overpass · one-level demo</p>
+        </div>
+      </div>
+      <div id="status" class="status">Round 1 · Player Phase</div>
+    </header>
+
+    <main class="layout">
+      <section class="board-wrap">
+        <div id="board" class="board" aria-label="tactical map"></div>
+        <div class="controls">
+          <button id="btn-endturn" class="btn primary">End Turn</button>
+          <button id="btn-wait" class="btn" disabled>Wait</button>
+          <button id="btn-cancel" class="btn" disabled>Cancel Move</button>
+          <button id="btn-restart" class="btn">Restart</button>
+          <button id="btn-mute" class="btn">🔊 Sound</button>
+        </div>
+        <div class="legend">
+          <span><i class="sw t-floor"></i> Street</span>
+          <span><i class="sw t-rubble"></i> Rubble (+DEF, slow)</span>
+          <span><i class="sw t-wall"></i> Wall</span>
+          <span><i class="sw t-extraction"></i> Extraction</span>
+          <span><i class="sw reach"></i> Move</span>
+          <span><i class="sw attack"></i> Attack</span>
+          <span><i class="sw heal"></i> Heal</span>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div id="status-panel" class="panel">
+          <div id="selinfo" class="selinfo"></div>
+        </div>
+        <div class="panel">
+          <div id="roster" class="roster"></div>
+        </div>
+        <div class="panel log-panel">
+          <h3>Field Log</h3>
+          <div id="log" class="log"></div>
+        </div>
+      </aside>
+    </main>
+
+    <div id="overlay" class="overlay"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

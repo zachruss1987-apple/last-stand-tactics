@@ -1,0 +1,157 @@
+// Rendering — owned jointly by Programmer (structure) and Graphics Designer (look).
+// Pure presentation: reads game state, writes DOM. Rebuilds the small board each change.
+
+import { keyOf } from './grid.js';
+
+function el(tag, className, text) {
+  const n = document.createElement(tag);
+  if (className) n.className = className;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function hpClass(u) {
+  const r = u.hp / u.maxHp;
+  if (r > 0.5) return 'hp-ok';
+  if (r > 0.25) return 'hp-warn';
+  return 'hp-low';
+}
+
+export class Renderer {
+  constructor(els) {
+    this.els = els; // { board, status, roster, selinfo, log, overlay, btnWait, btnCancel, btnEndTurn }
+  }
+
+  render(game) {
+    this.renderBoard(game);
+    this.renderStatus(game);
+    this.renderRoster(game);
+    this.renderSelected(game);
+    this.renderLog(game);
+    this.renderButtons(game);
+    this.renderOverlay(game);
+  }
+
+  renderBoard(game) {
+    const { grid } = game;
+    const board = this.els.board;
+    board.style.setProperty('--cols', grid.width);
+    board.style.setProperty('--rows', grid.height);
+    board.innerHTML = '';
+    for (let y = 0; y < grid.height; y++) {
+      for (let x = 0; x < grid.width; x++) {
+        const k = keyOf(x, y);
+        const cell = el('div', `cell t-${grid.key(x, y)}`);
+        cell.dataset.x = x;
+        cell.dataset.y = y;
+        if (game.reachable.has(k)) cell.classList.add('reach');
+        if (game.attackable.has(k)) cell.classList.add('attack');
+        if (game.healable.has(k)) cell.classList.add('heal');
+
+        const occ = game.unitAt(x, y);
+        if (occ) {
+          const unit = el('div', `unit f-${occ.faction}`);
+          if (occ === game.selected) unit.classList.add('selected');
+          if (occ.hasActed && occ.faction === 'player') unit.classList.add('acted');
+          unit.appendChild(el('div', 'glyph', occ.glyph));
+          const bar = el('div', 'hpbar');
+          const fill = el('div', `hpfill ${hpClass(occ)}`);
+          fill.style.width = `${(occ.hp / occ.maxHp) * 100}%`;
+          bar.appendChild(fill);
+          unit.appendChild(bar);
+          cell.appendChild(unit);
+        }
+        board.appendChild(cell);
+      }
+    }
+  }
+
+  renderStatus(game) {
+    const phase = game.phase === 'player' ? 'Player Phase' : 'Enemy Phase';
+    let tag = `Round ${game.round} · ${phase}`;
+    if (game.status === 'won') tag = 'Victory';
+    else if (game.status === 'lost') tag = 'Defeat';
+    this.els.status.textContent = tag;
+    this.els.status.className = `status phase-${game.phase} status-${game.status}`;
+  }
+
+  renderRoster(game) {
+    const root = this.els.roster;
+    root.innerHTML = '';
+    root.appendChild(el('h3', null, `Survivors (${game.players().length})`));
+    for (const u of game.units.filter((x) => x.faction === 'player')) {
+      const row = el('div', `rosrow ${u.alive ? '' : 'dead'} ${u.hasActed ? 'acted' : ''}`);
+      row.appendChild(el('span', 'ros-glyph', u.glyph));
+      row.appendChild(el('span', 'ros-name', u.name));
+      row.appendChild(el('span', 'ros-hp', u.alive ? `${u.hp}/${u.maxHp}` : 'DOWN'));
+      root.appendChild(row);
+    }
+    root.appendChild(el('h3', null, `Walkers (${game.enemies().length})`));
+  }
+
+  renderSelected(game) {
+    const root = this.els.selinfo;
+    root.innerHTML = '';
+    const u = game.selected;
+    if (!u) {
+      root.appendChild(el('p', 'muted', game.phase === 'player' && !game.busy
+        ? 'Click a survivor to select. Move, then attack, heal, or wait.'
+        : 'Enemy phase…'));
+      return;
+    }
+    root.appendChild(el('h3', null, `${u.name} — ${u.className}`));
+    const stats = el('div', 'stats');
+    stats.appendChild(el('span', null, `HP ${u.hp}/${u.maxHp}`));
+    stats.appendChild(el('span', null, `ATK ${u.atk}`));
+    stats.appendChild(el('span', null, `DEF ${u.def}`));
+    stats.appendChild(el('span', null, `MOV ${u.move}`));
+    stats.appendChild(el('span', null, `RNG ${u.range}`));
+    root.appendChild(stats);
+    if (game.step === 'move') {
+      root.appendChild(el('p', 'hint', 'Click a highlighted tile to move (or the survivor to stay).'));
+    } else if (game.step === 'action') {
+      const bits = [];
+      if (game.attackable.size) bits.push('a red tile to attack');
+      if (game.healable.size) bits.push('a green tile to heal');
+      const opts = bits.length ? `Click ${bits.join(', ')}, or Wait.` : 'No targets in range — Wait or Cancel.';
+      root.appendChild(el('p', 'hint', opts));
+    }
+  }
+
+  renderLog(game) {
+    const root = this.els.log;
+    root.innerHTML = '';
+    for (const line of game.logLines.slice(-9)) {
+      root.appendChild(el('div', 'logline', line));
+    }
+    root.scrollTop = root.scrollHeight;
+  }
+
+  renderButtons(game) {
+    const playerActing = game.status === 'playing' && game.phase === 'player' && !game.busy;
+    const inAction = playerActing && game.step === 'action';
+    this.els.btnWait.disabled = !inAction;
+    this.els.btnCancel.disabled = !inAction;
+    this.els.btnEndTurn.disabled = !playerActing;
+  }
+
+  renderOverlay(game) {
+    const root = this.els.overlay;
+    if (game.status === 'playing') {
+      root.classList.remove('show');
+      root.innerHTML = '';
+      return;
+    }
+    root.classList.add('show');
+    root.innerHTML = '';
+    const card = el('div', `overlay-card ${game.status}`);
+    card.appendChild(el('h1', null, game.status === 'won' ? 'SURVIVED' : 'OVERRUN'));
+    card.appendChild(el('p', null, game.status === 'won'
+      ? 'The survivors break through the overpass.'
+      : 'The horde takes the overpass. No one makes it out.'));
+    const btn = el('button', 'btn primary', 'Play Again');
+    btn.id = 'btn-restart-overlay';
+    card.appendChild(btn);
+    root.appendChild(card);
+  }
+}
