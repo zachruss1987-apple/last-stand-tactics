@@ -1,0 +1,11 @@
+# Local, machine-specific Claude Code overrides (autonomous permissions etc.)
+.claude/settings.local.json
+
+# Dependencies / build (none for the demo, but future-proofing)
+node_modules/
+dist/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
