@@ -62,7 +62,7 @@ export class Game {
     this.moveOrigin = { x: u.x, y: u.y };
     u.movedThisTurn = false;
     this.reachable = computeReachable(this.grid, u, this.units);
-    this.clearTargets();
+    this.computeTargets(); // attack/heal/open options from the current tile (act without moving)
     this.sfx('select');
     this.changed();
   }
@@ -104,15 +104,20 @@ export class Game {
     if (this.status !== 'playing' || this.phase !== 'player' || this.busy) return;
     const k = keyOf(x, y);
     const occ = this.unitAt(x, y);
-    if (this.step === 'action' && this.selected) {
+    if (this.selected) {
+      // Act-in-place options work in both the move and action steps (attack without moving).
       if (this.attackable.has(k) && occ) return this.attack(occ);
       if (this.healable.has(k) && occ) return this.heal(occ);
       if (this.openable.has(k)) return this.openDoor(x, y);
-      return; // finish via Guard / Wait / Cancel
+      // Switch to another ready survivor.
+      if (occ && occ.faction === 'player' && !occ.hasActed && occ !== this.selected) return this.selectUnit(occ);
+      // Move (only before acting).
+      if (this.step === 'move' && this.reachable.has(k)) return this.moveTo(x, y);
+      // Clicking empty ground before moving deselects; after moving it does nothing.
+      if (this.step === 'move') return this.deselect();
+      return;
     }
     if (occ && occ.faction === 'player' && !occ.hasActed) return this.selectUnit(occ);
-    if (this.selected && this.step === 'move' && this.reachable.has(k)) return this.moveTo(x, y);
-    this.deselect();
   }
 
   moveTo(x, y) {
@@ -215,7 +220,7 @@ export class Game {
 
   guard() {
     const u = this.selected;
-    if (!u || this.step !== 'action') return;
+    if (!u) return;
     if (!hasSkill(u, 'overwatch') || u.weapon.kind !== 'ranged' || !(u.ammo > 0)) return;
     u.overwatch = true;
     this.log(`${u.name} takes Overwatch, covering the approach.`);
@@ -223,7 +228,7 @@ export class Game {
   }
 
   wait() {
-    if (!this.selected || this.step !== 'action') return;
+    if (!this.selected) return;
     this.log(`${this.selected.name} holds position.`);
     this.finishAction();
   }

@@ -63,6 +63,17 @@ const w2hp0 = w2.hp;
 g2.selected = dana2; g2.step = 'action'; g2.computeTargets(); g2.attack(w2);
 ok(w2.hp === w2hp0 - exp2, 'Steady Aim adds +2 when the ranger did not move');
 
+// --- attack WITHOUT moving (regression) ---
+const g3 = new Game(LEVEL_01, {});
+const marcus = g3.players().find((u) => u.name === 'Marcus');
+const z3 = g3.enemies()[0];
+z3.x = marcus.x + 1; z3.y = marcus.y; // place a zombie adjacent to the fighter
+g3.selectUnit(marcus);
+ok(g3.step === 'move' && g3.attackable.size > 0, 'attack targets are available immediately on selection (no move needed)');
+const z3hp0 = z3.hp, marActed0 = marcus.hasActed;
+g3.handleCellClick(z3.x, z3.y); // click the adjacent zombie straight away
+ok(z3.hp < z3hp0 && !marActed0 && marcus.hasActed, 'clicking an in-range enemy attacks in place and spends the action');
+
 // --- doors & containers ---
 ok(g.isDoor(7, 1), 'door present at 7,1 (shed entrance)');
 ok(g.openDoor(7, 1) && !g.isDoor(7, 1), 'door opens to floor');

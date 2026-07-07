@@ -165,15 +165,15 @@ export class Renderer {
       root.appendChild(sk);
     }
 
+    const bits = [];
+    if (game.attackable.size) bits.push('red = attack');
+    if (game.healable.size) bits.push('green = heal');
+    if (game.openable.size) bits.push('amber = open door');
+    const acts = bits.length ? `Act now (${bits.join(', ')})` : 'No targets in range';
     if (game.step === 'move') {
-      root.appendChild(el('p', 'hint', 'Click a highlighted tile to move (or the survivor to stay).'));
-    } else if (game.step === 'action') {
-      const bits = [];
-      if (game.attackable.size) bits.push('red = attack');
-      if (game.healable.size) bits.push('green = heal');
-      if (game.openable.size) bits.push('amber = open door');
-      const opts = bits.length ? `Click ${bits.join(', ')} — or Guard / Wait.` : 'No targets — Guard, Wait, or Cancel.';
-      root.appendChild(el('p', 'hint', opts));
+      root.appendChild(el('p', 'hint', `Move to a blue tile, or act without moving. ${acts}. Or Guard / Wait.`));
+    } else {
+      root.appendChild(el('p', 'hint', `${acts} — or Guard / Wait / Cancel.`));
     }
   }
 
@@ -186,13 +186,14 @@ export class Renderer {
 
   renderButtons(game) {
     const playerActing = game.status === 'playing' && game.phase === 'player' && !game.busy;
-    const inAction = playerActing && game.step === 'action';
     const u = game.selected;
-    this.els.btnWait.disabled = !inAction;
-    this.els.btnCancel.disabled = !inAction;
+    const hasSelected = playerActing && !!u;
+    // Wait/Guard work whether or not the unit has moved; Cancel only reverts a move.
+    this.els.btnWait.disabled = !hasSelected;
+    this.els.btnCancel.disabled = !(playerActing && game.step === 'action');
     this.els.btnEndTurn.disabled = !playerActing;
     if (this.els.btnGuard) {
-      const canGuard = inAction && u && u.skills.includes('overwatch') && u.weapon.kind === 'ranged' && u.ammo > 0;
+      const canGuard = hasSelected && u.skills.includes('overwatch') && u.weapon.kind === 'ranged' && u.ammo > 0;
       this.els.btnGuard.disabled = !canGuard;
     }
   }
