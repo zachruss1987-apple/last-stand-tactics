@@ -31,6 +31,14 @@ Two purposes:
   system in M2 (zero-dependency, human-looking, weapon overlays, stat-driven zombie art).
   Downloaded/AI art revisited in a later milestone. See D7.
 
+- **Q7 — M3 sprite source.** You chose "download CC0 packs," but CC0 packs rarely match
+  our exact roster (weapon-carrying survivors + Walker/Runner/Brute/Spitter) and mixing
+  mismatched art reads worse than purpose-built. *For the first M3 pass the team is
+  authoring **cohesive pixel-art textures in code** (real pixel grids → Phaser textures,
+  zero licensing risk).* **Default:** code-authored pixel art now; swap in curated CC0 or
+  AI-generated sprites in a follow-up once you've seen the look and framing. Tell me if
+  you'd rather I stop and source CC0 character packs first.
+
 *(Answer any of these whenever you like — reply here or just tell the team. Until then
 the defaults are what's being built.)*
 
@@ -55,3 +63,15 @@ the defaults are what's being built.)*
 - **D7 — Art direction (2026-07-06).** Hand-coded **SVG paper-doll** character system:
   layered SVG humans, swappable weapon overlays, zombie size/posture/tint encoding stats.
   Chosen for zero-dependency, readability, and stat-driven variety. Resolves Q6.
+- **D8 — Adopt Phaser (2026-07-07).** M3 uses the **Phaser** framework for rendering the
+  board + battle scenes, vendored locally as `src/vendor/phaser.min.js` (no build step;
+  still runs by opening `src/index.html`). This **supersedes the zero-dependency rule (D1)**
+  for the view layer. The pure engine (grid/turn/combat/ai) stays framework-free so its
+  tests remain valid. Superseded stance from Q5 (stay browser) — still browser, now Phaser.
+- **D9 — Pixel-art style (2026-07-07).** The game moves from vector SVG to **pixel art**
+  (retro SRPG look) with full Fire-Emblem-style **battle cutaways** on attacks.
+- **D10 — CC0 asset pipeline + network egress (2026-07-07).** First-pass art from **CC0**
+  packs (Kenney/OpenGameArt/game-icons), downloaded and vendored locally under
+  `assets/graphics/`, every asset credited in `CREDITS.md`. The overnight run is granted
+  network egress (curl/wget/unzip) + bypassPermissions; reverted after. AI/custom art is a
+  later per-asset option.

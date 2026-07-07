@@ -30,7 +30,7 @@ Task backlog:
 **Definition of Done for M1:** all smoke tests pass, no console errors, a first-time
 player can win in a few turns with real tactical decisions.
 
-## 🔭 M2 — "Depth & Identity"  *(active — stakeholder-requested)*
+## ✅ M2 — "Depth & Identity"  *(shipped 2026-07-06)*
 Full work order in **[docs/m2-plan.md](m2-plan.md)**. Scope (approved 2026-07-06):
 - Human-looking survivors via a hand-coded **SVG paper-doll** system (replaces emoji).
 - **Visible equipped weapons**; a **melee vs ranged** weapon + **skill/trait** system.
@@ -40,6 +40,13 @@ Full work order in **[docs/m2-plan.md](m2-plan.md)**. Scope (approved 2026-07-06
 - Research-driven design: designers spawn `researcher` subagents for weapons/mechanics.
 - Deferred to later: infection mechanic, 2nd level/transition, audio sourcing, canvas port.
 
-## 🌍 M3+ — Campaign  *(vision)*
+## 🎬 M3 — "Pixel & Cinematics"  *(active — stakeholder-requested)*
+Full work order in **[docs/m3-plan.md](m3-plan.md)**. Graphics overhaul (approved 2026-07-07):
+- Adopt **Phaser** for rendering (vendored, no build step); keep the tested engine as the model.
+- **Pixel-art** tiles + survivor/zombie sprites from **CC0** packs (credited in `CREDITS.md`).
+- **Fire-Emblem-style battle cutaways** on attacks (animation, damage, HP drain; skippable).
+- Level **background art** + effect polish (camera, tweens, screen shake, damage popups).
+
+## 🌍 M4+ — Campaign  *(vision)*
 Multiple maps, permadeath persistence, support/relationship system, meta-progression,
-possible engine port (Godot/Unity) — pending stakeholder direction.
+infection mechanic — pending stakeholder direction.
