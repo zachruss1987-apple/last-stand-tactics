@@ -2,6 +2,20 @@
 
 Newest first. Format: `date — [role] change`.
 
+## 2026-07-08 (M3 — Pixel & Cinematics)
+- **[programmer]** Adopted **Phaser** as the board renderer (vendored, no build step),
+  keeping the pure engine as the model. New `src/js/game/{art,phaser-view,battle-scene}.js`.
+- **[graphics-designer]** **Pixel-art** overhaul: code-authored tiles + unit sprites (visible
+  weapons, stat-scaled zombies) baked into Phaser textures; apocalyptic **skyline backdrop**
+  + horizon haze behind the level. Replaces the SVG board.
+- **[programmer][graphics-designer]** **Fire-Emblem-style battle cutaway** on every attack:
+  side-view lunge/hit/recoil, HP drain, floating damage, screen shake; click-to-skip +
+  Battle Scenes on/off toggle. Engine awaits the cutaway; input frozen during it.
+- **[tester]** Verified headless (puppeteer-core + system Chrome): board renders, input
+  selects/moves, cutaway fires & completes, no console errors. Engine smoke tests still 24 green.
+- **[program-manager]** `CREDITS.md` added (Phaser MIT; art/audio original). Q7 logs the
+  code-authored-pixel-art-first choice for stakeholder review.
+
 ## 2026-07-06 (M2 build)
 - **[graphics-designer][programmer]** **SVG paper-doll art**: human survivor sprites with
   a visible equipped weapon; zombie sprites whose silhouette encodes stats (size ∝

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d1214"/>
+      <stop offset="1" stop-color="#070a0b"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#b)" stroke="#161c1e" stroke-width="1">
+    <path d="M0 240 V120 h60 v-16 h30 V88 h44 V240 Z"/>
+    <path d="M120 240 V96 h70 l8 -14 8 14 h64 V240 Z"/>
+    <path d="M250 240 V70 h90 v10 h34 V240 Z"/>
+    <path d="M360 240 V110 h48 V92 h60 v18 h30 V240 Z"/>
+    <path d="M470 240 V60 h30 v-18 h10 v18 h74 V240 Z"/>
+    <path d="M580 240 V104 h96 v-20 l16 -10 16 10 v20 h20 V240 Z"/>
+    <path d="M720 240 V84 h84 V240 Z"/>
+    <path d="M792 240 V128 h60 V100 h70 v28 h30 V240 Z"/>
+    <path d="M930 240 V72 h40 v-22 h12 v22 h58 V240 Z"/>
+    <path d="M1050 240 V112 h64 V96 h60 V240 Z"/>
+  </g>
+  <!-- broken / jagged tops -->
+  <g fill="#0a0f10">
+    <path d="M250 70 l12 8 12 -8 12 10 12 -10 12 8 V80 h-72 Z"/>
+    <path d="M720 84 l14 9 14 -9 14 9 14 -9 14 9 V96 h-84 Z"/>
+  </g>
+  <!-- scattered lit windows -->
+  <g fill="#d8a63c" opacity="0.55">
+    <rect x="140" y="120" width="4" height="5"/><rect x="158" y="140" width="4" height="5"/>
+    <rect x="300" y="96" width="4" height="6"/><rect x="322" y="130" width="4" height="6"/>
+    <rect x="500" y="90" width="3" height="5"/><rect x="486" y="120" width="3" height="5"/>
+    <rect x="612" y="130" width="4" height="6"/><rect x="648" y="160" width="4" height="6"/>
+    <rect x="820" y="140" width="4" height="6"/><rect x="880" y="118" width="4" height="6"/>
+    <rect x="1075" y="130" width="4" height="6"/><rect x="1100" y="150" width="4" height="6"/>
+  </g>
+  <g fill="#c65b4e" opacity="0.4">
+    <rect x="740" y="110" width="5" height="6"/><rect x="960" y="96" width="4" height="6"/>
+  </g>
+</svg>

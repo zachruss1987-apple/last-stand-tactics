@@ -31,7 +31,18 @@ body {
   min-height: 100vh;
 }
 
-.app { max-width: 1080px; margin: 0 auto; padding: 18px 20px 40px; }
+/* apocalyptic level backdrop: ruined skyline + horizon haze behind everything */
+body::before {
+  content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: min(40vh, 340px);
+  background: url("../../assets/graphics/skyline.svg") repeat-x bottom / auto 100%;
+  opacity: 0.5; pointer-events: none; z-index: 0;
+}
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(120% 55% at 50% 102%, rgba(150,60,25,0.16), transparent 60%);
+}
+
+.app { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 18px 20px 40px; }
 
 /* ---- top bar ---- */
 .topbar {
