@@ -1,4 +1,4 @@
-// Bootstrap — wires data, controller, renderer, audio, and input together.
+// Bootstrap — wires data, controller, Phaser board view, DOM HUD, audio, and input.
 // Run via a static server (see CLAUDE.md §7): http://localhost:8000/src/index.html
 
 import { LEVEL_01 } from './data/level-01.js';
@@ -6,11 +6,11 @@ import { Game } from './engine/turn.js';
 import { Renderer } from './engine/render.js';
 import { AudioEngine } from './engine/audio.js';
 import { attachInput } from './engine/input.js';
+import { createBoardView } from './game/phaser-view.js';
 
 function byId(id) { return document.getElementById(id); }
 
 const els = {
-  board: byId('board'),
   status: byId('status'),
   roster: byId('roster'),
   selinfo: byId('selinfo'),
@@ -25,15 +25,19 @@ const els = {
 };
 
 const audio = new AudioEngine();
-const renderer = new Renderer(els);
+const renderer = new Renderer(els); // HUD only — the board is rendered by Phaser
+
+let boardView; // set below; guard in onChange since the engine emits during construction
 
 const game = new Game(LEVEL_01, {
-  onChange: (g) => renderer.render(g),
+  onChange: (g) => { renderer.render(g); if (boardView) boardView.sync(g); },
   onAudio: (event) => audio.play(event),
 });
+
+boardView = createBoardView(game, 'board', { onPointer: () => audio.ensure() });
 
 attachInput(game, audio, els);
 renderer.render(game);
 
-// Expose for debugging / the Tester agent to poke state from the console.
+// Expose for debugging / the Tester agent.
 window.__game = game;

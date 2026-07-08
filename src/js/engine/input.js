@@ -3,16 +3,9 @@
 
 export function attachInput(game, audio, els) {
   // First interaction unlocks the audio context (browser autoplay policy).
+  // Board clicks are handled by the Phaser view (see phaser-view.js); here we wire the
+  // DOM HUD controls and keyboard shortcuts.
   const unlockAudio = () => audio.ensure();
-
-  els.board.addEventListener('click', (e) => {
-    unlockAudio();
-    const cell = e.target.closest('.cell');
-    if (!cell) return;
-    const x = Number(cell.dataset.x);
-    const y = Number(cell.dataset.y);
-    game.handleCellClick(x, y);
-  });
 
   els.btnEndTurn.addEventListener('click', () => { unlockAudio(); game.endTurn(); });
   if (els.btnGuard) els.btnGuard.addEventListener('click', () => { unlockAudio(); game.guard(); });

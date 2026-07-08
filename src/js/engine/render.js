@@ -2,8 +2,7 @@
 // Pure presentation: reads game state, writes DOM. Rebuilds the small board each change.
 // M2: SVG unit sprites, weapon/skill/ammo HUD, doors/containers/drops, overwatch badges.
 
-import { keyOf } from './grid.js';
-import { unitSVG, weaponIconSVG, itemSVG } from './sprites.js';
+import { weaponIconSVG } from './sprites.js';
 import { SKILLS } from '../data/skills.js';
 
 function el(tag, className, text) {
@@ -30,62 +29,12 @@ export class Renderer {
   }
 
   render(game) {
-    this.renderBoard(game);
     this.renderStatus(game);
     this.renderRoster(game);
     this.renderSelected(game);
     this.renderLog(game);
     this.renderButtons(game);
     this.renderOverlay(game);
-  }
-
-  renderBoard(game) {
-    const { grid } = game;
-    const board = this.els.board;
-    board.style.setProperty('--cols', grid.width);
-    board.style.setProperty('--rows', grid.height);
-    board.innerHTML = '';
-    for (let y = 0; y < grid.height; y++) {
-      for (let x = 0; x < grid.width; x++) {
-        const k = keyOf(x, y);
-        const cell = el('div', `cell t-${grid.key(x, y)}`);
-        cell.dataset.x = x;
-        cell.dataset.y = y;
-        if (game.reachable.has(k)) cell.classList.add('reach');
-        if (game.attackable.has(k)) cell.classList.add('attack');
-        if (game.healable.has(k)) cell.classList.add('heal');
-        if (game.openable.has(k)) cell.classList.add('openable');
-
-        // ground item (drop) sitting on this tile
-        if (game.drops.has(k)) {
-          const drop = el('div', 'drop');
-          drop.innerHTML = itemSVG(game.drops.get(k));
-          cell.appendChild(drop);
-        }
-
-        const occ = game.unitAt(x, y);
-        if (occ) {
-          const unit = el('div', `unit f-${occ.faction}`);
-          if (occ === game.selected) unit.classList.add('selected');
-          if (occ.hasActed && occ.faction === 'player') unit.classList.add('acted');
-          unit.innerHTML = unitSVG(occ);
-
-          const bar = el('div', 'hpbar');
-          const fill = el('div', `hpfill ${hpClass(occ)}`);
-          fill.style.width = `${(occ.hp / occ.maxHp) * 100}%`;
-          bar.appendChild(fill);
-          unit.appendChild(bar);
-
-          if (occ.faction === 'player' && isFinite(occ.ammo)) {
-            const ammo = el('div', `badge ammo ${occ.ammo === 0 ? 'empty' : ''}`, `${occ.ammo}`);
-            unit.appendChild(ammo);
-          }
-          if (occ.overwatch) unit.appendChild(el('div', 'badge watch', '◎'));
-          cell.appendChild(unit);
-        }
-        board.appendChild(cell);
-      }
-    }
   }
 
   renderStatus(game) {
