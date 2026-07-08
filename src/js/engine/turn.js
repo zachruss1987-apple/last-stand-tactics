@@ -192,12 +192,43 @@ export class Game {
   }
 
   // --- actions ---
+  // Resolve an attack and build a compact report for the battle cutaway (captures pre-hit
+  // HP before resolveAttack mutates it).
+  resolveWithReport(attacker, defender) {
+    const aHp0 = attacker.hp, dHp0 = defender.hp;
+    const events = resolveAttack(attacker, defender, this.grid, this.units);
+    const hit = events.find((e) => e.type === 'hit');
+    const counter = events.find((e) => e.type === 'counter');
+    const cleave = events.find((e) => e.type === 'cleave');
+    const report = {
+      attacker: { cls: attacker.cls, name: attacker.name, maxHp: attacker.maxHp, hpBefore: aHp0, hpAfter: attacker.hp },
+      defender: { cls: defender.cls, name: defender.name, maxHp: defender.maxHp, hpBefore: dHp0, hpAfter: defender.hp },
+      hitDmg: hit ? hit.dmg : 0,
+      counterDmg: counter ? counter.dmg : 0,
+      cleave: cleave ? { dmg: cleave.dmg } : null,
+      defenderDown: !defender.alive,
+      attackerDown: !attacker.alive,
+    };
+    return { events, report };
+  }
+
+  async playBattle(report) {
+    if (this.hooks.onBattle) { try { await this.hooks.onBattle(report); } catch (e) { /* view issue — continue */ } }
+  }
+
   attack(target) {
     const u = this.selected;
     if (!u) return;
-    const events = resolveAttack(u, target, this.grid, this.units);
-    this.applyCombatEvents(events);
-    this.finishAction();
+    const { events, report } = this.resolveWithReport(u, target);
+    const finish = () => { this.applyCombatEvents(events); this.finishAction(); };
+    if (this.hooks.onBattle) {
+      // Freeze board input during the cutaway; don't re-sync yet so the board still shows
+      // the pre-hit state behind the modal. Results apply after the animation.
+      this.busy = true;
+      Promise.resolve(this.playBattle(report)).then(() => { this.busy = false; finish(); });
+    } else {
+      finish(); // headless / battle scenes off elsewhere — resolve synchronously
+    }
   }
 
   heal(ally) {
@@ -349,7 +380,8 @@ export class Game {
           continue;
         }
         if (decision.target && decision.target.alive && inAttackRange(w, decision.target)) {
-          const events = resolveAttack(w, decision.target, this.grid, this.units);
+          const { events, report } = this.resolveWithReport(w, decision.target);
+          await this.playBattle(report);
           this.applyCombatEvents(events);
           this.changed();
           if (this.checkEnd()) { this.busy = false; this.changed(); return; }

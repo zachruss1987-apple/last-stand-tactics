@@ -32,6 +32,7 @@ let boardView; // set below; guard in onChange since the engine emits during con
 const game = new Game(LEVEL_01, {
   onChange: (g) => { renderer.render(g); if (boardView) boardView.sync(g); },
   onAudio: (event) => audio.play(event),
+  onBattle: (report) => (boardView ? boardView.playBattle(report) : Promise.resolve()),
 });
 
 boardView = createBoardView(game, 'board', { onPointer: () => audio.ensure() });
@@ -39,5 +40,16 @@ boardView = createBoardView(game, 'board', { onPointer: () => audio.ensure() });
 attachInput(game, audio, els);
 renderer.render(game);
 
+// Battle-scenes toggle (default on).
+const btnBattle = byId('btn-battle');
+if (btnBattle) {
+  btnBattle.addEventListener('click', () => {
+    boardView.battleEnabled = !boardView.battleEnabled;
+    btnBattle.textContent = `Battle Scenes: ${boardView.battleEnabled ? 'On' : 'Off'}`;
+    btnBattle.classList.toggle('muted', !boardView.battleEnabled);
+  });
+}
+
 // Expose for debugging / the Tester agent.
 window.__game = game;
+window.__view = boardView;

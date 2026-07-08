@@ -4,6 +4,7 @@
 // Phaser is loaded as a global via <script> (see index.html).
 
 import { bakeAll, unitTextureKey } from './art.js';
+import { BattleScene } from './battle-scene.js';
 
 const Phaser = window.Phaser;
 const TILE = 48; // on-screen pixels per tile (16px art scaled 3x)
@@ -142,8 +143,13 @@ export function createBoardView(engine, parentId, hooks = {}) {
   const g = engine.grid;
   const view = {
     scene: null,
+    battleScene: null,
+    battleEnabled: true,
     onPointer: hooks.onPointer || null,
     sync() { if (this.scene) this.scene.syncState(); },
+    playBattle(report) {
+      return (this.battleEnabled && this.battleScene) ? this.battleScene.play(report) : Promise.resolve();
+    },
   };
   const phaser = new Phaser.Game({
     type: Phaser.AUTO,
@@ -155,6 +161,7 @@ export function createBoardView(engine, parentId, hooks = {}) {
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_HORIZONTALLY },
   });
   phaser.scene.add('board', BoardScene, true, { engine, view });
+  phaser.scene.add('battle', BattleScene, true, { view });
   view.phaser = phaser;
   return view;
 }
